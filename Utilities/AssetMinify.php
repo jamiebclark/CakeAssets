@@ -4,7 +4,7 @@ require_once('../Vendor/PhpClosure.php');
 class AssetMinify {
 	public $forceOverwrite = false;
 	
-	const PLUGIN_NAME = 'Layout';
+	const PLUGIN_NAME = 'CakeAssets';
 	
 	function __construct() {
 		if (isset($_GET['clearCache'])) {
@@ -40,7 +40,7 @@ class AssetMinify {
 	public function getCacheDir($type, $forWeb = true, $filename = null) {
 		if ($forWeb) {
 			//$dir = 'Layout.min/';
-			$dir = "Layout./$type-min/";
+			$dir = self::PLUGIN_NAME . "./$type-min/";
 		} else {
 			$dir = $this->_getPluginDir() . 'webroot' . DS . $type . DS . 'min' . DS;
 		}
