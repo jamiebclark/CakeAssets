@@ -22,9 +22,10 @@ class AssetMinify {
 				$file = $config;
 				$config = array();
 			}
-			if (!empty($_GET['debug_output'])) {
-				debug($this->getPath($file, $type));
-			}
+
+
+			$this->debug([$file, $type, $this->getPath($file, $type)]);
+
 			if (is_file($this->getPath($file, $type))) {
 				$minFiles[] = $file;
 			} else {
@@ -283,5 +284,11 @@ class AssetMinify {
 			$plugin = self::PLUGIN_NAME;
 		}
 		return APP. 'Plugin' . DS . $plugin . DS;
+	}
+
+	private function debug($msg) {
+		if (!empty($_GET['debug_output'])) {
+			debug($msg);
+		}
 	}
 }
