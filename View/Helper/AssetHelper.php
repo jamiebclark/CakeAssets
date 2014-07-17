@@ -152,13 +152,13 @@ class AssetHelper extends CakeAssetsAppHelper {
 	}
 
 	
-	/**
-	 * Checks a View block for posted assets and adds them to minify
-	 *
-	 * @param String $type The asset type (css|js)
-	 * @param String $blockName Optional alternate name of the block. Otherwise type will be used
-	 * @return bool True on success
-	 **/
+/**
+ * Checks a View block for posted assets and adds them to minify
+ *
+ * @param String $type The asset type (css|js)
+ * @param String $blockName Optional alternate name of the block. Otherwise type will be used
+ * @return bool True on success
+ **/
 	private function getBlockAssets($type, $blockName = null) {
 		$AssetMinify = new AssetMinify();
 
@@ -167,18 +167,11 @@ class AssetHelper extends CakeAssetsAppHelper {
 		}
 		$block = $this->_View->fetch($blockName);
 
-		$AssetMinify->debug(compact('blockName', 'block'));
-
 		if (!empty($block)) {
-			//debug(preg_match_all('/()/', $block, $matches));
-			//if (preg_match_all('/<href=[\'"]([^\'"]+)/', $matches
 			$block = '<xml>' . preg_replace('#([^/])>#', '$1/>', $block) . '</xml>';
 			$xml = new SimpleXMLElement($block);
 			foreach ($xml->link as $k => $link) {
 				$attr = current($link->attributes());
-
-				$AssetMinify->debug(['type' => $type, 'href' => $attr['href']]);
-
 				$this->_addFile($type, $attr['href']);
 			}
 		}
@@ -199,14 +192,14 @@ class AssetHelper extends CakeAssetsAppHelper {
 		return $return;
 	}
 	
-	/**
-	 * Adds a file to the asset cache
-	 *
-	 * @param string $type  The type of asset (css or js)
-	 * @param array|string $files The path to the file or files to be added
-	 * @param array $configAll Settings to be passed to all file
-	 * @return boolean On success
-	 **/
+/**
+ * Adds a file to the asset cache
+ *
+ * @param string $type  The type of asset (css or js)
+ * @param array|string $files The path to the file or files to be added
+ * @param array $configAll Settings to be passed to all file
+ * @return boolean On success
+ **/
 	protected function _addFile($type, $files, $configAll = array()) {
 		if (!is_array($files)) {
 			$files = array($files);
@@ -247,7 +240,6 @@ class AssetHelper extends CakeAssetsAppHelper {
 				$typeFiles[$file] = $config;
 			}
 		}
-		// debug($this->_assets);
 		return true;
 	}
 	
