@@ -39,7 +39,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 
 	private $_minifyableTypes = array('css', 'js', 'jsAfterBlock');
 	
-	function __construct(View $view, $settings = array()) {
+	public function __construct(View $view, $settings = array()) {
 		parent::__construct($view, $settings);
 		
 		foreach ($this->defaultAssets as $assetGroupKey => $assetGroup) {
@@ -64,52 +64,15 @@ class AssetHelper extends CakeAssetsAppHelper {
 		}
 	}
 	
-	function js($file, $config = array()) {
-		$type = 'js';
-		if (!empty($config['afterBlock'])) {
-			$type = 'jsAfterBlock';
-			unset($config['afterBlock']);
-		}
-		return $this->_addFile($type, $file, $config);
-	}
-	
-	function css($file, $config = array()) {
-		return $this->_addFile('css', $file, $config);
-	}	
-	
-	function block($script, $config = array()) {
-		return $this->_addFile('block', $script, $config);
-	}
-	
-	function blockStart($options = array()) {
-		$this->_blockOptions = array();
-		ob_start();
-	}
-	
-	function blockEnd() {
-		$buffer = ob_get_clean();
-		$options = $this->_blockOptions;
-		$this->_blockOptions = array();
-		return $this->block($buffer, $options);
-	}
-	
-	function removeCss($file) {
-		return $this->_removeFile('css', $file);
-	}
-	
-	function removeJs($file) {
-		return $this->_removeFile('js', $file);
-	}
-
-	/**
-	 * Outputs all stored assets
-	 *
-	 * @param bool $inline If the output should be outputted right away or wait until fetch
-	 * @param bool $repeat If false, skips any assets that have already been outputted
-	 * @param array $types Optionally specify type of asset to output
-	 * @return A string of all assets
-	 **/
-	function output($inline = false, $repeat = false, $types = array()) {
+/**
+ * Outputs all stored assets
+ *
+ * @param bool $inline If the output should be outputted right away or wait until fetch
+ * @param bool $repeat If false, skips any assets that have already been outputted
+ * @param array $types Optionally specify type of asset to output
+ * @return A string of all assets
+ **/
+	public function output($inline = false, $repeat = false, $types = array()) {
 		$eol = "\n\t";
 		$out = $eol . '<!--- ASSETS -->'. $eol;
 		if (empty($types)) {
@@ -149,7 +112,44 @@ class AssetHelper extends CakeAssetsAppHelper {
 		$out .= '<!--- END ASSETS -->'. $eol;
 		return $out;
 	}
+
+	public function js($file, $config = array()) {
+		$type = 'js';
+		if (!empty($config['afterBlock'])) {
+			$type = 'jsAfterBlock';
+			unset($config['afterBlock']);
+		}
+		return $this->_addFile($type, $file, $config);
+	}
 	
+	public function css($file, $config = array()) {
+		return $this->_addFile('css', $file, $config);
+	}	
+	
+	public function block($script, $config = array()) {
+		return $this->_addFile('block', $script, $config);
+	}
+	
+	public function blockStart($options = array()) {
+		$this->_blockOptions = array();
+		ob_start();
+	}
+	
+	public function blockEnd() {
+		$buffer = ob_get_clean();
+		$options = $this->_blockOptions;
+		$this->_blockOptions = array();
+		return $this->block($buffer, $options);
+	}
+	
+	public function removeCss($file) {
+		return $this->_removeFile('css', $file);
+	}
+	
+	public function removeJs($file) {
+		return $this->_removeFile('js', $file);
+	}
+
 	
 	/**
 	 * Checks a View block for posted assets and adds them to minify
