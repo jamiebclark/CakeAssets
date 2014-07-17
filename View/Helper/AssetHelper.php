@@ -73,6 +73,8 @@ class AssetHelper extends CakeAssetsAppHelper {
  * @return A string of all assets
  **/
 	public function output($inline = false, $repeat = false, $types = array()) {
+		$AssetMinify = new AssetMinify();
+
 		$eol = "\n\t";
 		$out = $eol . '<!--- ASSETS -->'. $eol;
 		if (empty($types)) {
@@ -88,7 +90,6 @@ class AssetHelper extends CakeAssetsAppHelper {
 			if (!empty($this->_assets[$type])) {
 				$files = $this->_assets[$type];
 				if ($this->minify && in_array($type, $this->_minifyableTypes)) {
-					$AssetMinify = new AssetMinify();
 					$files = $AssetMinify->minify($files, $type);
 				}
 				foreach ($files as $file => $config) {
@@ -159,10 +160,15 @@ class AssetHelper extends CakeAssetsAppHelper {
 	 * @return bool True on success
 	 **/
 	private function getBlockAssets($type, $blockName = null) {
+		$AssetMinify = new AssetMinify();
+
 		if (empty($blockName)) {
 			$blockName = $type;
 		}
 		$block = $this->_View->fetch($blockName);
+
+		$AssetMinify->debug(compact('blockName', 'block'));
+
 		if (!empty($block)) {
 			//debug(preg_match_all('/()/', $block, $matches));
 			//if (preg_match_all('/<href=[\'"]([^\'"]+)/', $matches
@@ -170,6 +176,9 @@ class AssetHelper extends CakeAssetsAppHelper {
 			$xml = new SimpleXMLElement($block);
 			foreach ($xml->link as $k => $link) {
 				$attr = current($link->attributes());
+
+				$AssetMinify->debug(['type' => $type, 'href' => $attr['href']]);
+
 				$this->_addFile($type, $attr['href']);
 			}
 		}

@@ -24,7 +24,7 @@ class AssetMinify {
 			}
 
 
-			$this->debug([$file, $type, $this->getPath($file, $type)]);
+			$this->debug(['file' => $file, 'type' => $type, 'path' => $this->getPath($file, $type)]);
 
 			if (is_file($this->getPath($file, $type))) {
 				$minFiles[] = $file;
@@ -286,7 +286,7 @@ class AssetMinify {
 		return APP. 'Plugin' . DS . $plugin . DS;
 	}
 
-	private function debug($msg) {
+	public function debug($msg) {
 		if (!empty($_GET['debug_output'])) {
 			debug($msg);
 		}
