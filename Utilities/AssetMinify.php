@@ -130,14 +130,24 @@ class AssetMinify {
 		if (substr($file, 0, 1) == '/') {
 			$base = substr(Router::url('/'), 1, -1);
 			$parts = explode('/', $file);
+
+			$slice = false;
 			// Checks to make sure absolute path fits into the Cake infrastructure
-			if ($parts[1] == $base && ($parts[2] == $type || $parts[3] == $type)) {
-				if ($parts[3] == $type) {
-					$plugin = Inflector::camelize($parts[2]);
-					$slice = 4;
-				} else {
-					$slice = 3;
+			if ($parts[1] == $base) {
+				if ($parts[2] == $type || $parts[3] == $type) {
+					if ($parts[3] == $type) {
+						$plugin = Inflector::camelize($parts[2]);
+						$slice = 4;
+					} else {
+						$slice = 3;
+					}
 				}
+			} else if ($parts[1] == $type) {
+				// /css/style.css (no Base)
+				$slice = 2;
+			}
+
+			if ($slice) {
 				$file = implode('/', array_slice($parts, $slice));
 			}
 		}
