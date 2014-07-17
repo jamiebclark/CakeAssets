@@ -1,5 +1,6 @@
 <?php
-require_once('../Vendor/PhpClosure.php');
+//require_once('../Vendor/PhpClosure.php');
+App::uses('PhpClosure', 'CakeAssets.Vendor');
 
 class AssetMinify {
 	public $forceOverwrite = false;

@@ -1,5 +1,5 @@
 <?php
-App::uses('AssetMinify', 'Layout.Vendor');
+App::uses('AssetMinify', 'CakeAssets.Utilities');
 class MinifiedAssetsController extends CakeAssetsAppController {
 	var $name = 'MinifiedAssets';
 	var $uses = array();
