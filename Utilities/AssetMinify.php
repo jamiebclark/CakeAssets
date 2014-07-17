@@ -22,6 +22,9 @@ class AssetMinify {
 				$file = $config;
 				$config = array();
 			}
+			if (!empty($_GET['debug_output'])) {
+				debug($this->getPath($file, $type));
+			}
 			if (is_file($this->getPath($file, $type))) {
 				$minFiles[] = $file;
 			} else {
