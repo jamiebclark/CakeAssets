@@ -6,11 +6,11 @@ class MinifiedAssetsController extends CakeAssetsAppController {
 	
 	var $allowedActions = array('*');
 	
-	function beforeFilter() {
+	function beforeFilter($options = array()) {
 		if (isset($this->Auth)) {
 			$this->Auth->allow();
 		}
-		return parent::beforeFilter();
+		return parent::beforeFilter($options);
 	}
 	
 	function css($file = null) {
