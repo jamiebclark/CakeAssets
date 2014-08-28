@@ -85,8 +85,13 @@ class AssetHelper extends CakeAssetsAppHelper {
 		foreach ($types as $type) {
 			// Cut and paste those added with HtmlHelper
 			if (in_array($type, $this->_minifyableTypes)) {
-				$this->getBlockAssets($type);
+				$blockName = null;
+				if ($type == 'js') {
+					$blockName = 'script';
+				}
+				$this->getBlockAssets($type, $blockName);
 			}
+
 			if (!empty($this->_assets[$type])) {
 				$files = $this->_assets[$type];
 				if ($this->minify && in_array($type, $this->_minifyableTypes)) {
@@ -168,11 +173,27 @@ class AssetHelper extends CakeAssetsAppHelper {
 		$block = $this->_View->fetch($blockName);
 
 		if (!empty($block)) {
-			$block = '<xml>' . preg_replace('#([^/])>#', '$1/>', $block) . '</xml>';
+			switch ($type) {
+				case 'css':
+					$selfClosing = true;
+					$tag = 'link';
+					$attr = 'href';
+					break;
+				case 'js':
+					$selfClosing = false;
+					$tag = 'script';
+					$attr = 'src';
+					break;
+			}
+			if ($selfClosing) {
+				// Makes CSS calls self-closing
+				$block = preg_replace('#([^/])>#', '$1/>', $block);
+			}
+			$block = '<xml>' . $block . '</xml>';
 			$xml = new SimpleXMLElement($block);
-			foreach ($xml->link as $k => $link) {
-				$attr = current($link->attributes());
-				$this->_addFile($type, $attr['href']);
+			foreach ($xml->{$tag} as $k => $row) {
+				$attributes = current($row->attributes());
+				$this->_addFile($type, $attributes[$attr]);
 			}
 		}
 		$this->_View->assign($blockName, '');		// Clear existing block
