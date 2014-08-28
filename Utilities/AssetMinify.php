@@ -124,19 +124,29 @@ class AssetMinify {
 		
 		// Finds absolute file names
 		if (substr($file, 0, 1) == '/') {
-			$base = substr(Router::url('/'), 1, -1);
-
+			$base = explode('/', substr(Router::url('/'), 1, -1));
 			$parts = explode('/', $file);
 
 			$slice = false;
+
+			// Checks if the file has the same CakePhp base
+			$baseMatch = true;
+			foreach ($base as $k => $basePart) {
+				if ($basePart != $parts[$k+1]) {
+					$baseMatch = false;
+					break;
+				}
+			}
+
 			// Checks to make sure absolute path fits into the Cake infrastructure
-			if ($parts[1] == $base) {
-				if ($parts[2] == $type || $parts[3] == $type) {
-					if ($parts[3] == $type) {
-						$plugin = Inflector::camelize($parts[2]);
-						$slice = 4;
+			if ($baseMatch) {
+				$keyOffset = count($base); 	// Offsets by the amount of base folders
+				if ($parts[$keyOffset + 1] == $type || $parts[$keyOffset + 2] == $type) {
+					if ($parts[$keyOffset + 2] == $type) {
+						$plugin = Inflector::camelize($parts[$keyOffset + 1]);
+						$slice = $keyOffset + 3;
 					} else {
-						$slice = 3;
+						$slice = $keyOffset + 2;
 					}
 				}
 			} else if ($parts[1] == $type) {
@@ -159,8 +169,8 @@ class AssetMinify {
 		}
 			
 		$path = $root . $type . $ds . $file;
-		
-		debug(compact('base', 'parts', 'root', 'type', 'ds', 'file') + array(Router::url('/')));
+
+		// debug(compact('base', 'parts', 'root', 'type', 'ds', 'file') + array(Router::url('/')));
 
 		if (substr($path, -1 * strlen($type)) != $type) {
 			$path .= ".$type";
