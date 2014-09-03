@@ -190,10 +190,19 @@ class AssetHelper extends CakeAssetsAppHelper {
 				$block = preg_replace('#([^/])>#', '$1/>', $block);
 			}
 			$block = '<xml>' . $block . '</xml>';
+
 			$xml = new SimpleXMLElement($block);
+			$found = false;
 			foreach ($xml->{$tag} as $k => $row) {
 				$attributes = current($row->attributes());
-				$this->_addFile($type, $attributes[$attr]);
+				if (!empty($attributes[$attr])) {
+					$this->_addFile($type, $attributes[$attr]);
+					$found = true;
+				}
+			}
+
+			if (!$found) {
+				$this->_addFile('block', (string) $xml->{$tag});
 			}
 		}
 		$this->_View->assign($blockName, '');		// Clear existing block
@@ -277,6 +286,9 @@ class AssetHelper extends CakeAssetsAppHelper {
 	}
 	
 	protected function _output($type, $file, $config = array(), $inline = false) {
+		if (empty($file)) {
+			return '';
+		}
 		$options = compact('inline');
 		if (!empty($config['plugin'])) {
 			$options['plugin'] = $config['plugin'];
