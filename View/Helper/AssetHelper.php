@@ -192,17 +192,20 @@ class AssetHelper extends CakeAssetsAppHelper {
 			$block = '<xml>' . $block . '</xml>';
 
 			$xml = new SimpleXMLElement($block);
-			$found = false;
+			//$found = false;
 			foreach ($xml->{$tag} as $k => $row) {
 				$attributes = current($row->attributes());
 				if (!empty($attributes[$attr])) {
 					$this->_addFile($type, $attributes[$attr]);
 					$found = true;
+				} else if ($tag == 'script') {
+					// If the attribute isn't found, assumes it's a block element
+					$this->_addFile('block', (string) $row);
 				}
 			}
 
 			if (!$found) {
-				$this->_addFile('block', (string) $xml->{$tag});
+
 			}
 		}
 		$this->_View->assign($blockName, '');		// Clear existing block
