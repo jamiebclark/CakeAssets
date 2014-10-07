@@ -16,7 +16,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 			),
 		),
 		'bootstrap' => array(
-			'css' => array('Layout.bootstrap', 'Layout.bootstrap-responsive'),
+			'css' => array('Layout.bootstrap'),
 			'js' => array('Layout.bootstrap3.0/bootstrap.min'),
 		),
 		'default' => array(
