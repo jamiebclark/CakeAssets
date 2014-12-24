@@ -25,7 +25,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 		)
 	);
 	
-	public $minify = true;
+	public $minify = false;
 	
 	//After constructor, all assets will be stored here
 	private $_defaultAssets = array();
@@ -77,6 +77,8 @@ class AssetHelper extends CakeAssetsAppHelper {
 
 		$eol = "\n\t";
 		$out = $eol . '<!--- ASSETS -->'. $eol;
+		$base = Router::url('/');
+
 		if (empty($types)) {
 			$types = $this->_assetTypesComplete;
 		} else if (!is_array($types)) {
@@ -102,8 +104,13 @@ class AssetHelper extends CakeAssetsAppHelper {
 						$file = $config;
 						$config = array();
 					}
+
 					if ($this->isAssetUsed($type, $file) && !$repeat) {
 						continue;
+					}
+					// Strips the base
+					if ($base != '/' && strpos($file, $base) === 0) {
+						$file = substr($file, strlen($base) -1);
 					}
 					$out .= $this->_output($type, $file, $config, $inline) . $eol;
 					$this->setAssetUsed($type, $file);
