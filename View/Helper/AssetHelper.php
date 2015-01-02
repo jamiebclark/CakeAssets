@@ -25,7 +25,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 		)
 	);
 	
-	public $minify = false;
+	public $minify = true;
 	
 	//After constructor, all assets will be stored here
 	private $_defaultAssets = array();
