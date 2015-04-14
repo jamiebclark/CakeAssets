@@ -35,6 +35,7 @@ class AssetMinify {
 		}
 		if (!empty($minFiles)) {
 			$return[] = $this->getCacheFile($minFiles, $type);
+			$minFiles = array();
 		}	
 		return $return;
 	}
