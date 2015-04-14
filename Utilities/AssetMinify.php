@@ -6,6 +6,13 @@ class AssetMinify {
 	public $forceOverwrite = false;
 	
 	const PLUGIN_NAME = 'CakeAssets';
+
+/**
+ * Tracks the asset files
+ *
+ * @var array
+ **/
+	private $fileCache = array();
 	
 	function __construct() {
 		if (isset($_GET['clearCache'])) {
@@ -14,6 +21,15 @@ class AssetMinify {
 		}
 	}
 	
+/**
+ * Resets the cache file array
+ *
+ * @return void;
+ **/
+	public function resetCache() {
+		$this->fileCache = array();
+	}
+
 	public function minify($files, $type = 'css') {
 		$return = array();
 		$minFiles = array();
@@ -23,7 +39,13 @@ class AssetMinify {
 				$config = array();
 			}
 
-			if (is_file($this->getPath($file, $type))) {
+			$filePath = $this->getPath($file, $type);
+			if (isset($this->fileCache[$type][$filePath])) {
+				continue;
+			}
+			$this->fileCache[$type][$filePath] = $filePath;
+
+			if (is_file($filePath)) {
 				$minFiles[] = $file;
 			} else {
 				if (!empty($minFiles)) {
