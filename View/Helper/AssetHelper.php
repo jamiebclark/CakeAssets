@@ -52,6 +52,11 @@ class AssetHelper extends CakeAssetsAppHelper {
 				unset($settings[$assetGroupKey]);
 			}
 		}
+
+		if (!empty($_GET['minify'])) {
+			$this->minifiy = round($_GET['minify']);
+		}
+
 		$this->_set($settings);
 		$this->setDefaultAssets();
 		foreach ($this->_assetTypes as $type) {
