@@ -53,7 +53,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 			}
 		}
 
-		if (!empty($_GET['minify'])) {
+		if (isset($_GET['minify'])) {
 			$this->minifiy = round($_GET['minify']);
 		}
 
