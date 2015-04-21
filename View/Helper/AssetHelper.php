@@ -20,8 +20,8 @@ class AssetHelper extends CakeAssetsAppHelper {
 			'js' => array('Layout.bootstrap3.0/bootstrap.min'),
 		),
 		'default' => array(
-			//'css' => array('Layout.style'),
-			//'js' => array('Layout.script')
+			'css' => array(),
+			'js' => array()
 		)
 	);
 	
@@ -54,11 +54,12 @@ class AssetHelper extends CakeAssetsAppHelper {
 		}
 
 		if (isset($_GET['minify'])) {
-			$this->minifiy = round($_GET['minify']);
+			$this->minify = round($_GET['minify']);
 		}
 
 		$this->_set($settings);
 		$this->setDefaultAssets();
+
 		foreach ($this->_assetTypes as $type) {
 			if (!empty($this->_defaultAssets[$type])) {
 				$this->$type($this->_defaultAssets[$type]);
@@ -136,8 +137,11 @@ class AssetHelper extends CakeAssetsAppHelper {
 		if (!empty($config['afterBlock'])) {
 			$type = 'jsAfterBlock';
 			unset($config['afterBlock']);
+			return $this->_addFile($type, $file, $config);
+		} else {
+			$config['inline'] = false;
+			return $this->Html->script($file, $config);
 		}
-		return $this->_addFile($type, $file, $config);
 	}
 	
 	public function css($file, $config = array()) {
@@ -297,7 +301,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 		if (empty($file)) {
 			return '';
 		}
-		$options = compact('inline');
+		$options = compact('inline') + array('once' => false);
 		if (!empty($config['plugin'])) {
 			$options['plugin'] = $config['plugin'];
 			unset($config['plugin']);

@@ -193,8 +193,6 @@ class AssetMinify {
 			
 		$path = $root . $type . $ds . $file;
 
-		// debug(compact('base', 'parts', 'root', 'type', 'ds', 'file') + array(Router::url('/')));
-
 		if (substr($path, -1 * strlen($type)) != $type) {
 			$path .= ".$type";
 		}
@@ -203,7 +201,6 @@ class AssetMinify {
 			array_pop($path);
 			$path = implode($ds, $path) . $ds;
 		}
-		//debug(compact('file', 'type', 'path', 'root'));
 		return $path;
 	}
 	
