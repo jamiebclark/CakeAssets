@@ -152,7 +152,7 @@ class AssetMinify {
 			$base = explode('/', substr(Router::url('/'), 1, -1));
 			$parts = explode('/', $file);
 
-			if (empty($plugin) && $parts[1] == 'js') {
+			if (empty($plugin) && $parts[1] == $type) {
 				$plugin = Inflector::classify($parts[0]);
 			}
 
