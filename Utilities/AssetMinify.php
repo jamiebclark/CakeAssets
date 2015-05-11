@@ -152,6 +152,10 @@ class AssetMinify {
 			$base = explode('/', substr(Router::url('/'), 1, -1));
 			$parts = explode('/', $file);
 
+			if (empty($plugin) && $parts[1] == 'js') {
+				$plugin = Inflector::modelize($parts[0]);
+			}
+
 			$slice = false;
 
 			// Checks if the file has the same CakePhp base
@@ -195,7 +199,7 @@ class AssetMinify {
 			
 		$path = $root . $type . $ds . $file;
 
-		debug(compact('oFile', 'root', 'type', 'file', 'plugin', 'path'));
+		debug(compact('oFile', 'parts', 'root', 'type', 'file', 'plugin', 'path'));
 
 		if (substr($path, -1 * strlen($type)) != $type) {
 			$path .= ".$type";
