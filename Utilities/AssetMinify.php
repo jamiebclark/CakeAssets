@@ -151,12 +151,12 @@ class AssetMinify {
 		if (substr($file, 0, 1) == '/') {
 			$base = explode('/', substr(Router::url('/'), 1, -1));
 			$parts = explode('/', $file);
+			$slice = false;
 
 			if (empty($plugin) && $parts[2] == $type) {
 				$plugin = Inflector::classify($parts[1]);
+				$slice = 3;
 			}
-
-			$slice = false;
 
 			// Checks if the file has the same CakePhp base
 			$baseMatch = true;
