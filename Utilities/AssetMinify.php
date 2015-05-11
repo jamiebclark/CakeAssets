@@ -145,8 +145,6 @@ class AssetMinify {
 			$file = $oFile;
 		}
 		
-		debug(compact('plugin', 'file'));
-
 		// Finds absolute file names
 		if (substr($file, 0, 1) == '/') {
 			$base = explode('/', substr(Router::url('/'), 1, -1));
@@ -200,8 +198,6 @@ class AssetMinify {
 			
 		$path = $root . $type . $ds . $file;
 
-		debug(compact('oFile', 'parts', 'root', 'type', 'file', 'plugin', 'path'));
-
 		if (substr($path, -1 * strlen($type)) != $type) {
 			$path .= ".$type";
 		}
@@ -211,8 +207,6 @@ class AssetMinify {
 			$path = implode($ds, $path) . $ds;
 		}
 
-		debug($path);
-		
 		return $path;
 	}
 	
