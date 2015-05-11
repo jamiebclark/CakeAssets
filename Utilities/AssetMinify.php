@@ -195,7 +195,7 @@ class AssetMinify {
 			
 		$path = $root . $type . $ds . $file;
 
-		debug(compact('path', 'root', 'type', 'file', 'plugin'));
+		debug(compact('oFile', 'root', 'type', 'file', 'plugin', 'path'));
 
 		if (substr($path, -1 * strlen($type)) != $type) {
 			$path .= ".$type";
