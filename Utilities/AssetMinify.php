@@ -153,6 +153,7 @@ class AssetMinify {
 			$parts = explode('/', $file);
 			$slice = false;
 
+			// If Plugin is not found but the files exists in a Plugin directory
 			if (empty($plugin) && $parts[2] == $type) {
 				$plugin = Inflector::classify($parts[1]);
 				$slice = 3;
@@ -209,6 +210,9 @@ class AssetMinify {
 			array_pop($path);
 			$path = implode($ds, $path) . $ds;
 		}
+
+		debug($path);
+		
 		return $path;
 	}
 	
