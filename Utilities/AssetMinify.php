@@ -153,7 +153,7 @@ class AssetMinify {
 			$parts = explode('/', $file);
 
 			if (empty($plugin) && $parts[1] == 'js') {
-				$plugin = Inflector::modelize($parts[0]);
+				$plugin = Inflector::classify($parts[0]);
 			}
 
 			$slice = false;
