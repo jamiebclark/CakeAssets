@@ -155,7 +155,7 @@ class AssetMinify {
 
 			// If Plugin is not found but the files exists in a Plugin directory
 			if (empty($plugin) && $parts[2] == $type) {
-				$plugin = Inflector::classify($parts[1]);
+				$plugin = Inflector::camelize($parts[1]);
 				$slice = 3;
 			}
 
