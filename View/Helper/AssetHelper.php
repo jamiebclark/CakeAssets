@@ -4,42 +4,42 @@ App::uses('AssetMinify', 'CakeAssets.Utilities');
 
 class AssetHelper extends CakeAssetsAppHelper {
 	public $name = 'Asset';
-	public $helpers = array('Html');
+	public $helpers = ['Html'];
 	
 	//Assets to be loaded whenever helper is called, broken down by category
-	public $defaultAssets = array(
-		'jquery' => array(
-			'css' => array('Layout.jquery/ui/ui-lightness/jquery-ui-1.10.3.custom.min'),
-			'js' => array(
+	public $defaultAssets = [
+		'jquery' => [
+			'css' => ['Layout.jquery/ui/ui-lightness/jquery-ui-1.10.3.custom.min'],
+			'js' => [
 				'//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js',
 				'//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js'
-			),
-		),
-		'bootstrap' => array(
-			'css' => array('Layout.bootstrap'),
-			'js' => array('Layout.bootstrap3.0/bootstrap.min'),
-		),
-		'default' => array(
-			'css' => array(),
-			'js' => array()
-		)
-	);
+			],
+		],
+		'bootstrap' => [
+			'css' => ['Layout.bootstrap'],
+			'js' => ['Layout.bootstrap3.0/bootstrap.min'],
+		],
+		'default' => [
+			'css' => [],
+			'js' => []
+		]
+	];
 	
 	public $minify = true;
 	
 	//After constructor, all assets will be stored here
-	private $_defaultAssets = array();
+	private $_defaultAssets = [];
 
-	private $_assetTypes = array('css', 'js');
-	private $_assetTypesComplete = array('css', 'js', 'block', 'jsAfterBlock');
+	private $_assetTypes = ['css', 'js'];
+	private $_assetTypesComplete = ['css', 'js', 'block', 'jsAfterBlock'];
 
-	private $_assets = array();
-	private $_usedAssets = array();
-	private $_blocked = array();
+	private $_assets = [];
+	private $_usedAssets = [];
+	private $_blocked = [];
 
-	private $_minifyableTypes = array('css', 'js', 'jsAfterBlock');
+	private $_minifyableTypes = ['css', 'js', 'jsAfterBlock'];
 	
-	public function __construct(View $view, $settings = array()) {
+	public function __construct(View $view, $settings = []) {
 		parent::__construct($view, $settings);
 		
 		foreach ($this->defaultAssets as $assetGroupKey => $assetGroup) {
@@ -78,7 +78,7 @@ class AssetHelper extends CakeAssetsAppHelper {
  * @param array $types Optionally specify type of asset to output
  * @return A string of all assets
  **/
-	public function output($inline = false, $repeat = false, $types = array()) {
+	public function output($inline = false, $repeat = false, $types = []) {
 		$AssetMinify = new AssetMinify();
 
 		$eol = "\n\t";
@@ -88,7 +88,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 		if (empty($types)) {
 			$types = $this->_assetTypesComplete;
 		} else if (!is_array($types)) {
-			$types = array($types);
+			$types = [$types];
 		}
 		foreach ($types as $type) {
 			// Cut and paste those added with HtmlHelper
@@ -108,7 +108,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 				foreach ($files as $file => $config) {
 					if (is_numeric($file)) {
 						$file = $config;
-						$config = array();
+						$config = [];
 					}
 
 					if ($this->isAssetUsed($type, $file) && !$repeat) {
@@ -132,7 +132,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 		return $out;
 	}
 
-	public function js($file, $config = array()) {
+	public function js($file, $config = []) {
 		$type = 'js';
 		if (!empty($config['afterBlock'])) {
 			$type = 'jsAfterBlock';
@@ -144,23 +144,23 @@ class AssetHelper extends CakeAssetsAppHelper {
 		}
 	}
 	
-	public function css($file, $config = array()) {
+	public function css($file, $config = []) {
 		return $this->_addFile('css', $file, $config);
 	}	
 	
-	public function block($script, $config = array()) {
+	public function block($script, $config = []) {
 		return $this->_addFile('block', $script, $config);
 	}
 	
-	public function blockStart($options = array()) {
-		$this->_blockOptions = array();
+	public function blockStart($options = []) {
+		$this->_blockOptions = [];
 		ob_start();
 	}
 	
 	public function blockEnd() {
 		$buffer = ob_get_clean();
 		$options = $this->_blockOptions;
-		$this->_blockOptions = array();
+		$this->_blockOptions = [];
 		return $this->block($buffer, $options);
 	}
 	
@@ -224,11 +224,11 @@ class AssetHelper extends CakeAssetsAppHelper {
 	//Converts type to the corresponding Html helper type
 	private function getHtmlType($type) {
 		$return = null;
-		if (in_array($type, array('css', 'script'))) {
+		if (in_array($type, ['css', 'script'])) {
 			$return = $type;
-		} else if (in_array($type, array('block'))) {
+		} else if (in_array($type, ['block'])) {
 			$return = 'block';
-		} else if (in_array($type, array('js'))) {
+		} else if (in_array($type, ['js'])) {
 			$return = 'script';
 		}
 		return $return;
@@ -242,19 +242,19 @@ class AssetHelper extends CakeAssetsAppHelper {
  * @param array $configAll Settings to be passed to all file
  * @return boolean On success
  **/
-	protected function _addFile($type, $files, $configAll = array()) {
+	protected function _addFile($type, $files, $configAll = []) {
 		if (!is_array($files)) {
-			$files = array($files);
+			$files = [$files];
 		}
 		if (!isset($this->_assets[$type])) {
-			$this->_assets[$type] = array();
+			$this->_assets[$type] = [];
 		}
 		$typeFiles =& $this->_assets[$type];
 		$prependCount = 0;
 		foreach ($files as $file => $config) {
 			if (is_numeric($file)) {
 				$file = $config;
-				$config = array();
+				$config = [];
 			}
 			if ($file === false) {
 				continue;
@@ -266,7 +266,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 			$config = array_merge($configAll, $config);
 			if (!empty($config['prepend'])) {
 				unset($config['prepend']);
-				$insert = array($file => $config);
+				$insert = [$file => $config];
 				if (empty($typeFiles)) {
 					$this->_assets[$type] += $insert;
 				} else if (empty($prependCount)) {
@@ -287,7 +287,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 	
 	protected function _removeFile($type, $files) {
 		if (!is_array($files)) {
-			$files = array($files);
+			$files = [$files];
 		}
 		foreach ($files as $file) {
 			if (isset($this->_assets[$type][$file])) {
@@ -297,17 +297,17 @@ class AssetHelper extends CakeAssetsAppHelper {
 		}
 	}
 	
-	protected function _output($type, $file, $config = array(), $inline = false) {
+	protected function _output($type, $file, $config = [], $inline = false) {
 		if (empty($file)) {
 			return '';
 		}
-		$options = compact('inline') + array('once' => false);
+		$options = compact('inline') + ['once' => false];
 		if (!empty($config['plugin'])) {
 			$options['plugin'] = $config['plugin'];
 			unset($config['plugin']);
 		}
 		if ($type == 'css') {
-			$keys = array('media');
+			$keys = ['media'];
 			foreach ($keys as $key) {
 				if (!empty($config[$key])) {
 					$options[$key] = $config[$key];
@@ -326,7 +326,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 	}
 
 	private function setDefaultAssets() {
-		$default = array('css' => array(), 'js' => array());
+		$default = ['css' => [], 'js' => []];
 		foreach ($this->defaultAssets as $assetGroup) {
 			foreach ($assetGroup as $type => $assets) {
 				if (is_array($assets)) {
