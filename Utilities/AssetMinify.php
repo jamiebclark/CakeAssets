@@ -136,13 +136,23 @@ class AssetMinify {
 	 * @return string The path to the file
 	 **/
 	private function getPath($file, $type, $dirOnly = false, $forWeb = false) {
-		$oFile = $file;
+		if (strpos($file, '//') !== false) {
+			return $file;
+		}
+
 		$ds = $forWeb ? '/' : DS;
 		
-		list($plugin, $file) = pluginSplit($oFile);
-		if (!empty($plugin) && !preg_match('/^[A-Z]/', $plugin)) {
-			$plugin = null;
-			$file = $oFile;
+		/*
+		$base = Router::url('/');
+		if ($base != '/' && strpos($file, $base) === 0) {
+			$file = substr($file, strlen($base));
+		}
+		*/
+
+		$oFile = $file;
+		$plugin = null;
+		if (preg_match('/^[A-Z]/', $file)) {
+			list($plugin, $file) = pluginSplit($oFile);
 		}
 		
 		// Finds absolute file names
@@ -152,7 +162,7 @@ class AssetMinify {
 			$slice = false;
 
 			// If Plugin is not found but the files exists in a Plugin directory
-			if (empty($plugin) && $parts[2] == $type) {
+			if (empty($plugin) && $parts[2] == $type && (empty($base) || $base[0] != $parts[1])) {
 				$plugin = Inflector::camelize($parts[1]);
 				$slice = 3;
 			}
