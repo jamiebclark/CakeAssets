@@ -1,6 +1,9 @@
 <?php
 App::uses('CakeAssetsAppHelper', 'CakeAssets.View/Helper');
-App::uses('AssetMinify', 'CakeAssets.Utilities');
+App::uses('AssetMinify', 'CakeAssets.Utility');
+
+App::uses('PluginConfig', 'CakeAssets.Utility');
+PluginConfig::init('CakeAssets');
 
 class AssetHelper extends CakeAssetsAppHelper {
 	public $name = 'Asset';
@@ -22,7 +25,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 		]
 	];
 	
-	public $minify = true;
+	public $minify = false;
 	
 	//After constructor, all assets will be stored here
 	private $_defaultAssets = [];
@@ -42,6 +45,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 	];
 	
 	public function __construct(View $view, $settings = []) {
+
 		parent::__construct($view, $settings);
 		
 		foreach ($this->defaultAssets as $assetGroupKey => $assetGroup) {
@@ -55,6 +59,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 			}
 		}
 
+		$this->minify = Configure::read('CakeAssets.minify');
 		if (isset($_GET['minify'])) {
 			$this->minify = round($_GET['minify']);
 		}
