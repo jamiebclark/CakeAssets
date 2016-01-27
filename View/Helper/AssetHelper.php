@@ -40,8 +40,8 @@ class AssetHelper extends CakeAssetsAppHelper {
 	private $_minifyableTypes = ['css', 'js', 'jsAfterBlock'];
 
 	private $_assetBlocks = [
-		'css' => ['css'],
-		'js' => ['script'],
+		'css' => ['cssFirst', 'css', 'cssLast'],
+		'js' => ['jsFirst', 'js', 'script', 'jsLast'],
 	];
 	
 	public function __construct(View $view, $settings = []) {
@@ -77,6 +77,17 @@ class AssetHelper extends CakeAssetsAppHelper {
 		}
 	}
 	
+	public function reset($type = null) {
+		foreach ($this->_assetTypes as $assetType) {
+			if (empty($type) || $type == $assetType) {
+				foreach ($this->_assetBlocks[$assetType] as $blockName) {
+					$this->clearBlock($blockName);
+				}
+				$this->_assets[$assetType] = [];
+			}
+		}
+	}
+
 /**
  * Outputs all stored assets
  *
@@ -87,7 +98,6 @@ class AssetHelper extends CakeAssetsAppHelper {
  **/
 	public function output($inline = false, $repeat = false, $types = []) {
 		$AssetMinify = new AssetMinify();
-
 		$eol = "\n\t";
 		$out = $eol . '<!--- ASSETS -->'. $eol;
 		$base = Router::url('/');
@@ -127,19 +137,29 @@ class AssetHelper extends CakeAssetsAppHelper {
 					if ($this->isAssetUsed($type, $file) && !$repeat) {
 						continue;
 					}
-
 					$out .= $this->_output($type, $file, $config, $inline) . $eol;
 					$this->setAssetUsed($type, $file);
 				}
-				
+				/*				
 				if ($htmlType = $this->getHtmlType($type)) {
 					$out .= $this->_View->fetch($htmlType);
-					$this->_View->set($htmlType, '');
+					$this->clearBlock($htmlType);
 				}
+				*/
 			}
 		}
 		$out .= '<!--- END ASSETS -->'. $eol;
 		return $out;
+	}
+
+/**
+ * Empties a block in the View element
+ *
+ * @param string $blockName The name of the block
+ * @return void;
+ **/
+	protected function clearBlock($blockName) {
+		return $this->_View->set($blockName, '');
 	}
 
 	public function js($file, $config = []) {
@@ -241,7 +261,7 @@ class AssetHelper extends CakeAssetsAppHelper {
 					$cache[$key][] = $val;
 				}
 			}
-			$this->_View->assign($blockName, '');		// Clear existing block
+			$this->clearBlock($blockName);		// Clear existing block
 		endforeach;
 
 		foreach ($cache as $type => $vals) {
