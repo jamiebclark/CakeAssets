@@ -159,6 +159,7 @@ class AssetMinify {
 		}
 
 		$ds = $forWeb ? '/' : DS;
+		$notDs = $forWeb ? DS : '/';
 		
 		/*
 		$base = Router::url('/');
@@ -235,7 +236,7 @@ class AssetMinify {
 			$path = implode($ds, $path) . $ds;
 		}
 
-		return $path;
+		return str_replace($notDs, $ds, $path);
 	}
 	
 	// Finds the full path of where the cached file will be stored
@@ -292,44 +293,24 @@ class AssetMinify {
 		$fileContent = '';
 		foreach ($files as $file) {
 			$path = $this->getPath($file, $type);
+
 			if (!empty($PhpClosure)) {
 				$PhpClosure->add($path);
 			} else {
 				if (is_file($path)) {
-					$content = file_get_contents($path);
+					$content = $this->_fileGetContents($path);
 
 					//Strip comments
 					$content = preg_replace('!/\*.*?\*/!s', '', $content);
 					
 					//Update CSS
 					if ($type == 'css') {
-						$webDir = $this->getPath($file, $type, true, true);
-						$replace = [];
-
-						//Looks for relative url calls
-						if (preg_match_all('#(url\([\'"]*)((\.\./)+)*([^/][^/\.:]*[/\.])([^\)]*\))#', $content, $matches)) {
-							foreach ($matches[0] as $k => $match) {
-								$dir = $webDir;
-								if (!empty($matches[2][$k])) {	//Detects "../" and moves the root directory up those levels
-									$up = substr_count($matches[2][$k], '../');
-									$dir = $this->getParentDir($webDir, '/', $up);
-								}
-								$replace[$match] = $matches[1][$k] . $dir . $matches[4][$k] . $matches[5][$k];
-							}
-						}
-						if (preg_match_all('/@import[^;]+;/', $content, $matches)) {
-							foreach ($matches[0] as $match) {
-								$fileHeader .= $match;
-								$replace[$match] = '';
-							}
-						}
-						if (!empty($replace)) {
-							$content = str_replace(array_keys($replace), array_values($replace), $content, $count);
-						}
+						$content = $this->_replaceRelativeUrls($content, $this->getPath($file, $type, true, true));
 					}
 					if (!empty($fileContent)) {
 						$fileContent .= "\n";
 					}
+
 					$fileContent .= "/*$file*/\n";
 					$fileContent .= $content;
 				}	
@@ -341,6 +322,40 @@ class AssetMinify {
 			fwrite($fp, $fileHeader . $fileContent);
 		}
 		fclose($fp);
+	}
+
+	private function _fileGetContents($path) {
+		$content = file_get_contents($path);
+		$content = mb_convert_encoding($content, 'UTF-8', 
+			mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
+		$content = str_replace("\xEF\xBB\xBF",'',$content); // Remove Byte Order Mark
+		return $content;
+	}
+
+	private function _replaceRelativeUrls($content, $webDir) {
+		$replace = [];
+
+		//Looks for relative url calls
+		if (preg_match_all('#(url\([\'"]*)((\.\./)+)*([^/][^/\.:]*[/\.])([^\)]*\))#', $content, $matches)) {
+			foreach ($matches[0] as $k => $match) {
+				$dir = $webDir;
+				if (!empty($matches[2][$k])) {	//Detects "../" and moves the root directory up those levels
+					$up = substr_count($matches[2][$k], '../');
+					$dir = $this->getParentDir($webDir, '/', $up);
+				}
+				$replace[$match] = $matches[1][$k] . $dir . $matches[4][$k] . $matches[5][$k];
+			}
+		}
+		if (preg_match_all('/@import[^;]+;/', $content, $matches)) {
+			foreach ($matches[0] as $match) {
+				$fileHeader .= $match;
+				$replace[$match] = '';
+			}
+		}
+		if (!empty($replace)) {
+			$content = str_replace(array_keys($replace), array_values($replace), $content, $count);
+		}
+		return $content;
 	}
 	
 	private function getParentDir($dir, $ds = DS, $levels = 1) {
