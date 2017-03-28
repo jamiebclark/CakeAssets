@@ -326,8 +326,11 @@ class AssetMinify {
 
 	private function _fileGetContents($path) {
 		$content = file_get_contents($path);
-		$content = mb_convert_encoding($content, 'UTF-8', 
-			mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
+		// Ensures content is UTF-8
+		if (function_exists("mb_convert_encoding")) {
+			$content = mb_convert_encoding($content, 'UTF-8', 
+				mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
+		}
 		$content = str_replace("\xEF\xBB\xBF",'',$content); // Remove Byte Order Mark
 		return $content;
 	}
