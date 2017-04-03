@@ -235,8 +235,9 @@ class AssetMinify {
 			array_pop($path);
 			$path = implode($ds, $path) . $ds;
 		}
-
-		return str_replace($notDs, $ds, $path);
+		$path = str_replace($notDs, $ds, $path);
+		$path = str_replace($ds . $ds, $ds, $path);
+		return $path;
 	}
 	
 	// Finds the full path of where the cached file will be stored
@@ -298,8 +299,8 @@ class AssetMinify {
 				$PhpClosure->add($path);
 			} else {
 				if (is_file($path)) {
-					$content = $this->_fileGetContents($path);
-
+					$content = $this->_fileGetContents($path, empty($fileContent));
+					//debug(compact('path', 'content'));
 					//Strip comments
 					$content = preg_replace('!/\*.*?\*/!s', '', $content);
 					
@@ -324,14 +325,16 @@ class AssetMinify {
 		fclose($fp);
 	}
 
-	private function _fileGetContents($path) {
+	private function _fileGetContents($path, $isFirst = true) {
 		$content = file_get_contents($path);
 		// Ensures content is UTF-8
 		if (function_exists("mb_convert_encoding")) {
 			$content = mb_convert_encoding($content, 'UTF-8', 
 				mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
 		}
-		$content = str_replace("\xEF\xBB\xBF",'',$content); // Remove Byte Order Mark
+		if (!$isFirst) {
+			$content = str_replace("\xEF\xBB\xBF",'',$content); // Remove Byte Order Mark
+		}
 		return $content;
 	}
 
