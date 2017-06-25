@@ -301,11 +301,14 @@ class AssetMinify {
 				if (is_file($path)) {
 					$content = $this->_fileGetContents($path, empty($fileContent));
 					//debug(compact('path', 'content'));
-					//Strip comments
+
+					// Strip comments
 					$content = preg_replace('!/\*.*?\*/!s', '', $content);
 					
-					//Update CSS
+					// Update CSS
 					if ($type == 'css') {
+						// Strip endlines
+						$content = str_replace(["\t", "\n", "\r"], '', $content);
 						$content = $this->_replaceRelativeUrls($content, $this->getPath($file, $type, true, true));
 					}
 					if (!empty($fileContent)) {
