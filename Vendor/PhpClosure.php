@@ -48,7 +48,7 @@ class PhpClosure {
   var $_warning_level = "DEFAULT";
   var $_use_closure_library = false;
   var $_pretty_print = false;
-  var $_debug = true;
+  var $_debug = false;
   var $_cache_dir = "";
   var $_code_url_prefix = "";
 
