@@ -289,6 +289,7 @@ class AssetMinify {
 		if ($type == 'js') {
 			$PhpClosure = new PhpClosure();
 		}
+		//$PhpClosure = false;
 
 		$fileHeader = '';
 		$fileContent = '';
@@ -320,8 +321,12 @@ class AssetMinify {
 				}	
 			}
 		}
+
 		if (!empty($PhpClosure)) {
-			fwrite($fp, $PhpClosure->compile());
+			ob_start();
+			$PhpClosure->write();
+			$fileContent = ob_get_clean();
+			fwrite($fp, $fileContent);
 		} else {
 			fwrite($fp, $fileHeader . $fileContent);
 		}

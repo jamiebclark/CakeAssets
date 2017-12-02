@@ -97,6 +97,8 @@ class AssetHelper extends CakeAssetsAppHelper {
  * @return A string of all assets
  **/
 	public function output($inline = false, $repeat = false, $types = []) {
+		App::uses('AssetMinify', 'CakeAssets.Utility');
+
 		$AssetMinify = new AssetMinify();
 		$eol = "\n\t";
 		$out = $eol . '<!--- ASSETS -->'. $eol;
